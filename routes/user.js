@@ -4,8 +4,9 @@ const { user } = require('../controllers');
 const { userLoginSchema } = require('../validations/user');
 
 router.post('/login', validate(userLoginSchema), user.registerORlogin);
-router.get('/dashboard', authorize, user.getDashboard);
-router.get('/users', authorize, user.getUsers);
-router.post('/addContact/:contactId', authorize, user.addContact);
+router.use(authorize);
+router.get('/dashboard', user.getDashboard);
+router.get('/users', user.getUsers);
+router.post('/addContact/:contactId', user.addContact);
 
 module.exports = router;

@@ -8,22 +8,20 @@ module.exports = function (schema) {
                 const { error, value } = schema.body.validate(req.body);
                 if (error) throw error;
                 req.body = value;
-                next()
             }
-            else if (schema.query) {
+            if (schema.query) {
                 const { error, value } = schema.query.validate(req.query);
                 if (error) throw error;
                 req.query = value;
-                next()
             }
-            else {
+            if(schema.params){
                 const { error, value } = schema.params.validate(req.params);
                 if (error) throw error;
                 req.params = value;
-                next()
             }
+            next();
         } catch (error) {
-            return response.validationError(res, error);
+            return response.validationErrorResponse(res, error);
         }
     }
 }
