@@ -4,7 +4,6 @@ const server = require('http').createServer(app);
 const connection = require('./db/connection');
 const bodyparser = require('body-parser');
 const routes = require('./routes');
-const config = require('./config/server');
 const cors = require('cors');
 const corsOptions = {
     origin: function (origin, callback) {
@@ -25,10 +24,10 @@ app.use(routes);
 
 connection.connect().then((connected) => {
 
-    server.listen(config.PORT || 3000, (err) => {
+    server.listen(process.env.PORT || 3000, (err) => {
 
         if (err) throw err;
-        else console.log(`App Running on port ${config.PORT || 3000}`);
+        else console.log(`App Running on port ${process.env.PORT || 3000}`);
 
     });
 
