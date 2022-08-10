@@ -27,19 +27,23 @@ module.exports.registerORlogin = async function (payload) {
 };
 module.exports.getUsers = async function (payload) {
     try {
+        let $match = {
+            $and: [
+                { _id: { $ne: payload.userId } }
+            ]
+        };
+        if (payload.search) {
+            $match.$and.push({ email: { $regex: payload.search, $options: "i" } });
+        }
         let users = await Model.users.aggregate([
             {
-                $match: {
-                    $and: [
-                        { _id: { $ne: payload.userId } }
-                    ]
-                }
+                $match:$match
             },
             {
                 $project: {
-                    username:{$first:{$split:['$email','@']}},
-                    userId:"$_id",
-                    _id:0
+                    username: { $first: { $split: ['$email', '@'] } },
+                    userId: "$_id",
+                    _id: 0
                 }
             }
         ]);
@@ -106,7 +110,7 @@ module.exports.getDashboard = async function (payload) {
                                         }
                                     }
                                 },
-                                ],
+                            ],
                             as: "details"
                         }
                     },
@@ -115,9 +119,9 @@ module.exports.getDashboard = async function (payload) {
                     },
                     {
                         $project: {
-                            _id:0,
+                            _id: 0,
                             contactId: "$details._id",
-                            contactname:{$first:{$split:['$details.email','@']}}
+                            contactname: { $first: { $split: ['$details.email', '@'] } }
                         }
                     }
                 ],
@@ -125,16 +129,16 @@ module.exports.getDashboard = async function (payload) {
             }
         },
         {
-            $project:{
-                _id:0,
-                userId:"$_id",
-                username:{$first:{$split:['$email','@']}},
-                email:"$email",
-                contacts:"$contacts",
+            $project: {
+                _id: 0,
+                userId: "$_id",
+                username: { $first: { $split: ['$email', '@'] } },
+                email: "$email",
+                contacts: "$contacts",
             }
         }
         ]);
-        return universalFunction.returnData(statusCodes.SUCCESS, messages.SUCCESS,{userdata:userdata[0]});
+        return universalFunction.returnData(statusCodes.SUCCESS, messages.SUCCESS, { userdata: userdata[0] });
     } catch (error) {
         throw error;
     }

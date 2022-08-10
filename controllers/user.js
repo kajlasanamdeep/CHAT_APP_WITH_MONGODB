@@ -20,7 +20,7 @@ module.exports.getDashboard = async function (req, res) {
 };
 module.exports.getUsers = async function (req, res) {
     try {
-        const payload = await handler.user.getUsers({userId:req.loggedUser._id});
+        const payload = await handler.user.getUsers({search:req.query.search,userId:req.loggedUser._id});
         return response.sendResponse(res, payload.status, payload.message, payload.data);
     } catch (error) {
         return response.errorResponse(res, error);

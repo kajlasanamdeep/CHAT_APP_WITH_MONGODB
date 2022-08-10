@@ -7,6 +7,7 @@ router.post('/login', validate(userLoginSchema), user.registerORlogin);
 router.use(authorize);
 router.get('/dashboard', user.getDashboard);
 router.get('/users', user.getUsers);
+router.get('/messages',)
 router.post('/addContact/:contactId', user.addContact);
 
 module.exports = router;
