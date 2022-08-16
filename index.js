@@ -21,7 +21,7 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 app.use(routes);
-const io = require('socket.io')(server,{cors:corsOptions});
+const io = require('socket.io')(server,{cors:{origin:'http://localhost:3000'}});
 io.on('connection',sockets);
 connection.connect().then((connected) => {
 
