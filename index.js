@@ -1,11 +1,12 @@
 const app = require('express')();
 const server = require('http').createServer(app);
-// const io = require('socket.io')(server);
+const io = require('socket.io')(server);
 const connection = require('./db/connection');
 const bodyparser = require('body-parser');
 const routes = require('./routes');
 const cors = require('cors');
 const config  = require('./config/server');
+const sockets = require('./socket.io/sockets');
 const corsOptions = {
     origin: function (origin, callback) {
         if (!origin) return callback(null, true);
@@ -22,7 +23,7 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 app.use(routes);
-
+io.on('connection',sockets);
 connection.connect().then((connected) => {
 
     server.listen(process.env.PORT || config.PORT, (err) => {
