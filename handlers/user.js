@@ -2,7 +2,6 @@ const universalFunction = require('../libs/universalfunctions');
 const Model = require('../models');
 const messages = require("../constants/messages");
 const statusCodes = require("../constants/statusCodes");
-const { user } = require('.');
 
 module.exports.registerORlogin = async function (payload) {
     try {
@@ -170,6 +169,11 @@ module.exports.getMessages = async function (payload) {
                         { $and: [{ to: contact._id }, { from: payload.user._id }] },
                         { $and: [{ to: payload.user._id }, { from: contact._id }] }
                     ]
+                }
+            },
+            {
+                $sort:{
+                    at:-1
                 }
             },
             {
