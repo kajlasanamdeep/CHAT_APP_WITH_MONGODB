@@ -173,7 +173,7 @@ module.exports.getMessages = async function (payload) {
             },
             {
                 $sort:{
-                    at:-1
+                    at:1
                 }
             },
             {
