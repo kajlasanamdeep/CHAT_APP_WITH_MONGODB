@@ -1,4 +1,4 @@
-const {chats,contacts} = require('../models');
+const {chats} = require('../models');
 const users = {};
 module.exports = (socket) => {
     socket.on('online', (user) => {

@@ -1,6 +1,5 @@
 const app = require('express')();
 const server = require('http').createServer(app);
-const io = require('socket.io')(server);
 const connection = require('./db/connection');
 const bodyparser = require('body-parser');
 const routes = require('./routes');
@@ -18,11 +17,11 @@ const corsOptions = {
     },
     optionsSuccessStatus: 200
 };
-
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 app.use(routes);
+const io = require('socket.io')(server,{cors:corsOptions});
 io.on('connection',sockets);
 connection.connect().then((connected) => {
 
