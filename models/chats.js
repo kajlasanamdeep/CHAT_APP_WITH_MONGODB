@@ -15,6 +15,10 @@ const chatModel = new Schema({
         type: Date,
         default:Date.now()
     },
+    deletedFor:{
+        type:Array,
+        default:[]
+    },
     isDeleted: {
         type:Boolean,
         default:false

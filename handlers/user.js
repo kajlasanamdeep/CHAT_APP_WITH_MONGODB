@@ -2,6 +2,7 @@ const universalFunction = require('../libs/universalfunctions');
 const Model = require('../models');
 const messages = require("../constants/messages");
 const statusCodes = require("../constants/statusCodes");
+const { user } = require('.');
 
 module.exports.registerORlogin = async function (payload) {
     try {
@@ -37,7 +38,7 @@ module.exports.getUsers = async function (payload) {
         }
         let users = await Model.users.aggregate([
             {
-                $match:$match
+                $match: $match
             },
             {
                 $project: {
@@ -143,3 +144,35 @@ module.exports.getDashboard = async function (payload) {
         throw error;
     }
 };
+
+module.exports.getMessages = async function (payload) {
+    try {
+        let contact = await Model.users.findById(payload.contactId);
+        if (!contact) {
+            return universalFunction.returnError(statusCodes.BAD_REQUEST, messages.INVALID_CONTACT);
+        }
+        let chats = await Model.chats.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { $and: { to: contact._id, from: payload.userId } },
+                        { $and: { to: payload.userId, from: contact._id } }
+                    ]
+                }
+            },
+            {
+                $project: {
+                    to: { $cond: [{ $eq: ['$to', payload.userId] }, user.email.split('@')[0], contact.email.split('@')[0]] },
+                    from: { $cond: [{ $eq: ['$from', payload.userId] }, user.email.split('@')[0], contact.email.split('@')[0]] },
+                    type: { $cond: [{ $eq: ['$to', payload.userId] }, 'received', 'sended'] },
+                    message: 1,
+                    at:"$at"
+                }
+            }
+        ]);
+        return universalFunction.returnData(statusCodes.SUCCESS, messages.SUCCESS, { messages:chats });
+    }
+    catch (error) {
+        throw error;
+    }
+}

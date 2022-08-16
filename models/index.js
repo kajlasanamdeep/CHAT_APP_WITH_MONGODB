@@ -1,5 +1,5 @@
 module.exports = {
     users:require('./users'),
-    chats:require('./chat'),
+    chats:require('./chats'),
     contacts:require('./contacts')
 }
