@@ -60,8 +60,20 @@ module.exports.addContact = async function (payload) {
             return universalFunction.returnError(statusCodes.BAD_REQUEST, messages.INVALID_CONTACT);
         }
         let existing = await Model.contacts.findOne({
-            contactId: contact._id,
-            userId: payload.userId
+            $and: [
+                {
+                    $or: [
+                        { userId: payload.userId },
+                        { contactId: payload.userId }
+                    ]
+                },
+                {
+                    $or: [
+                        { userId: contact._id },
+                        { contactId: contact._id }
+                    ]
+                }
+            ]
         });
         if (!existing) {
             await Model.contacts.create({
@@ -155,22 +167,22 @@ module.exports.getMessages = async function (payload) {
             {
                 $match: {
                     $or: [
-                        { $and: { to: contact._id, from: payload.userId } },
-                        { $and: { to: payload.userId, from: contact._id } }
+                        { $and: [{ to: contact._id }, { from: payload.user._id }] },
+                        { $and: [{ to: payload.user._id }, { from: contact._id }] }
                     ]
                 }
             },
             {
                 $project: {
-                    to: { $cond: [{ $eq: ['$to', payload.userId] }, user.email.split('@')[0], contact.email.split('@')[0]] },
-                    from: { $cond: [{ $eq: ['$from', payload.userId] }, user.email.split('@')[0], contact.email.split('@')[0]] },
-                    type: { $cond: [{ $eq: ['$to', payload.userId] }, 'received', 'sended'] },
+                    to: { $cond: [{ $eq: ['$to', payload.user._id] }, payload.user.email.split('@')[0], contact.email.split('@')[0]] },
+                    from: { $cond: [{ $eq: ['$from', payload.user._id] }, payload.user.email.split('@')[0], contact.email.split('@')[0]] },
+                    type: { $cond: [{ $eq: ['$to', payload.user._id] }, 'received', 'sended'] },
                     message: 1,
-                    at:"$at"
+                    at: "$at"
                 }
             }
         ]);
-        return universalFunction.returnData(statusCodes.SUCCESS, messages.SUCCESS, { messages:chats });
+        return universalFunction.returnData(statusCodes.SUCCESS, messages.SUCCESS, { messages: chats });
     }
     catch (error) {
         throw error;

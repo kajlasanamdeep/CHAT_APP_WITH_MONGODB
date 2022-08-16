@@ -36,7 +36,7 @@ module.exports.addContact = async function (req, res) {
 };
 module.exports.getMessages = async function (req, res) {
     try {
-        const payload = await handler.user.getMessages({contactId:req.params.contactId,userId:req.loggedUser._id});
+        const payload = await handler.user.getMessages({contactId:req.params.contactId,user:req.loggedUser});
         return response.sendResponse(res, payload.status, payload.message, payload.data);
     } catch (error) {
         return response.errorResponse(res, error);
