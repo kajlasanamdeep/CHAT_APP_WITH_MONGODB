@@ -131,7 +131,6 @@ module.exports.getDashboard = async function (payload) {
                     },
                     {
                         $project: {
-                            _id: 0,
                             contactId: "$details._id",
                             contactname: { $first: { $split: ['$details.email', '@'] } }
                         }

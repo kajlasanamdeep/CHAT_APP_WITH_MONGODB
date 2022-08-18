@@ -1,15 +1,21 @@
+// Importing package modules
 const app = require('express')();
 const server = require('http').createServer(app);
-const connection = require('./db/connection');
 const bodyparser = require('body-parser');
-const routes = require('./routes');
 const cors = require('cors');
-const config  = require('./config/server');
-const sockets = require('./socket.io/sockets');
+
+// Importing File modules
+const routes = require('./routes');
+const socketIo = require('./socket.io');
+const config = require('./config/server');
+const connection = require('./db/connection');
+
+// Declaring constant variables
+const origins = ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
 const corsOptions = {
     origin: function (origin, callback) {
         if (!origin) return callback(null, true);
-        if (['http://localhost:3000','http://localhost:3001','http://localhost:3002','http://localhost:3003'].indexOf(origin) === -1) {
+        if (origins.indexOf(origin) === -1) {
             let msg = 'The CORS policy for this site does not allow access from the specified Origin.';
             return callback(new Error(msg), false);
         }
@@ -17,12 +23,17 @@ const corsOptions = {
     },
     optionsSuccessStatus: 200
 };
+
+// setting application middlewares
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 app.use(routes);
-const io = require('socket.io')(server,{cors:{origin:['http://localhost:3000','http://localhost:3001','http://localhost:3002','http://localhost:3003']}});
-io.on('connection',sockets);
+
+//Initalizing socketIO server
+socketIo(require('socket.io')(server, { cors: { origin: origins } }));
+
+// connecting database & running server
 connection.connect().then((connected) => {
 
     server.listen(process.env.PORT || config.PORT, (err) => {
