@@ -2,21 +2,24 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const chatModel = new Schema({
     to:{
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        required:true
     },
     from:{
         type: Schema.Types.ObjectId,
+        required:true,
         ref: 'users'
     },
     message: {
-        type: String
+        type: String,
+        required:true
     },
     at: {
         type: Date,
         default:Date.now()
     },
     deletedFor:{
-        type:Array,
+        type:[Schema.Types.ObjectId],
         default:[]
     },
     isDeleted: {

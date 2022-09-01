@@ -11,7 +11,7 @@ const config = require('./config/server');
 const connection = require('./db/connection');
 
 // Declaring constant variables
-const origins = ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
+const origins = ['http://localhost:3000', 'http://localhost:3001', 'https://whatsapp-clone-shubhamsaini759.vercel.app'];
 const corsOptions = {
     origin: function (origin, callback) {
         if (!origin) return callback(null, true);

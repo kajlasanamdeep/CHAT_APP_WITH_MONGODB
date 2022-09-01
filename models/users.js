@@ -2,10 +2,12 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const userModel = new Schema({
     email: {
-        type: String
+        type: String,
+        required:true
     },
     password: {
-        type: String
+        type: String,
+        required:true
     },
     isDeleted: {
         type:Boolean,
